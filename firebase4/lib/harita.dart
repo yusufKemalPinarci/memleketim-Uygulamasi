@@ -60,7 +60,7 @@ class _HaritaPageState extends State<HaritaPage> {
 
             ),),
         ElevatedButton(onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>YerEklePage(enlem:enlem ,boylam: boylam,)));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>YerEklePage(enlem:enlem ,boylam: boylam,)));
         }, child: Text("markeri ekle"))
       ]),
     );

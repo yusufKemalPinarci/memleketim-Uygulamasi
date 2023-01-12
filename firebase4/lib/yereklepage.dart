@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase4/adminpage.dart';
 import 'package:firebase4/harita.dart';
 import 'package:firebase4/listelemepage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -89,7 +90,16 @@ class _YerEklePageState extends State<YerEklePage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               InkWell(
-                                onTap: () async {},
+                                onTap: () async {
+                                  final picker = await ImagePicker()
+                                      .pickImage(source: ImageSource.camera);
+                                  resim1 = XFile(picker!.path);
+                                  setState((){
+                                    mediaUrl = resim1!.path;
+                                  });
+
+
+                                },
                                 child: Icon(Icons.camera_alt),
                               ),
                               SizedBox(
@@ -118,10 +128,10 @@ class _YerEklePageState extends State<YerEklePage> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context,
+                    Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => HaritaPage()));
                   },
-                  child: Text("yer ekle")),
+                  child: Text("konum gir")),
               ElevatedButton(
                   onPressed: () async{
                     print(widget.enlem.toString());
@@ -143,7 +153,13 @@ class _YerEklePageState extends State<YerEklePage> {
                     mediaUrl="";
                   });
                     },
-                  child: Text("Ekle"))
+                  child: Text("Ekle")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => AdminScreen()));
+                  },
+                  child: Text("anasayfa")),
             ],
           ),
         ],

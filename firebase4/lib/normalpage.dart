@@ -10,6 +10,7 @@ class NormalScreen extends StatefulWidget {
   @override
   State<NormalScreen> createState() => _NormalScreenState();
 }
+
 FirebaseAuth auth = FirebaseAuth.instance;
 
 class _NormalScreenState extends State<NormalScreen> {
@@ -18,7 +19,7 @@ class _NormalScreenState extends State<NormalScreen> {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar:AppBar(
+      appBar: AppBar(
         title: Text('My App'),
         actions: <Widget>[
           IconButton(
@@ -27,22 +28,24 @@ class _NormalScreenState extends State<NormalScreen> {
               color: Colors.white,
             ),
             onPressed: () {
-              if (auth.currentUser != null){auth.signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));}
-              else{
+              if (auth.currentUser != null) {
+                auth.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
+              } else {
                 print("oturum zaten açık değil");
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));}
-    }
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
+              }
+            }
 
-
-              // do something
+            // do something
             ,
           )
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firestore.collection("yerler").snapshots(),
-
         builder: (context, snaphot) {
           return !snaphot.hasData
               ? CircularProgressIndicator()
@@ -50,7 +53,7 @@ class _NormalScreenState extends State<NormalScreen> {
                   itemCount: snaphot.data!.docs.length,
                   itemBuilder: (context, index) {
                     DocumentSnapshot mypost = snaphot.data!.docs[index];
-                     final Geopoint = mypost['geopoint'] as GeoPoint;
+                    final Geopoint = mypost['geopoint'] as GeoPoint;
 
                     Future<void> _showChoiseDialog(BuildContext context) {
                       return showDialog(
@@ -60,53 +63,57 @@ class _NormalScreenState extends State<NormalScreen> {
                                 title: Text(
                                   "${mypost['bilgi']}",
                                   textAlign: TextAlign.center,
-                                ),actions: [
-                              SizedBox(
-                                width: 200,
-                                height: 200,
-                                child: GoogleMap(
-                                  initialCameraPosition: CameraPosition(
-                                    target: LatLng(Geopoint.latitude, Geopoint.longitude),
-                                    zoom: 12.0,
-                                  ),
-
-                                  markers: {
-
-                                  Marker(
-                                      markerId: MarkerId("marker1"),
-                                      position: LatLng(Geopoint.latitude, Geopoint.longitude),
-                                      infoWindow: InfoWindow(
-                                        title: "Konum",
-
-                                      ),
-                                      onTap: () {
-                                        // Marker'a tıklandığında yapılacak işlemler
-                                      },
+                                ),
+                                actions: [
+                                  Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 200,
+                                          height: 200,
+                                          child: GoogleMap(
+                                            initialCameraPosition: CameraPosition(
+                                              target: LatLng(Geopoint.latitude,
+                                                  Geopoint.longitude),
+                                              zoom: 12.0,
+                                            ),
+                                            markers: {
+                                              Marker(
+                                                markerId: MarkerId("marker1"),
+                                                position: LatLng(
+                                                    Geopoint.latitude,
+                                                    Geopoint.longitude),
+                                                infoWindow: InfoWindow(
+                                                  title: "Konum",
+                                                ),
+                                                onTap: () {
+                                                  // Marker'a tıklandığında yapılacak işlemler
+                                                },
+                                              ),
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  },
-
-
-
-
-                                ),),
-                            ],
+                                  ),
+                                ],
                                 shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0))),
+                                        BorderRadius.all(Radius.circular(8.0))),
                                 content: Container(
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                    ),
-                                     ));
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                  ),
+                                ));
                           });
                     }
+
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: InkWell(
-                        onTap: () {
-
-                        },
+                        onTap: () {},
                         child: Container(
                           height: size.height * .3,
                           decoration: BoxDecoration(
@@ -117,20 +124,17 @@ class _NormalScreenState extends State<NormalScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
-                              onTap: (){
+                              onTap: () {
                                 _showChoiseDialog(context);
-
                               },
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "${mypost['baslik']}",
                                     style: TextStyle(fontSize: 16),
                                     textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
                                   ),
                                   Center(
                                       child: CircleAvatar(

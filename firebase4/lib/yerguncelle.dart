@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase4/adminpage.dart';
 import 'package:firebase4/loginpage.dart';
+import 'package:firebase4/yereklepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,6 +33,14 @@ class _YerGuncellePageState extends State<YerGuncellePage> {
     TextEditingController bilgiController = new TextEditingController();
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => AdminScreen()));
+        },
+        label: Text("anasayfa"),
+
+      ),
       appBar: AppBar(
         title: Text('My App'),
         actions: <Widget>[
@@ -71,53 +81,87 @@ class _YerGuncellePageState extends State<YerGuncellePage> {
                       return showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: TextField(
-                                  decoration: InputDecoration(
-                                      hintText: "${mypost['baslik']}")),
-                              content: Column(children: [
-                                SizedBox(
-                                  width: 400,
-                                  height: 300,
-                                  child: GoogleMap(
-                                    onTap: (LatLng location) {
-                                      setState(() {
-                                        enlem = location.latitude;
-                                        boylam = location.longitude;
-                                        print(enlem.toString() +
-                                            boylam.toString());
-
-
-                                      });
-                                    },
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(geopoint.latitude, geopoint.longitude),
-                                      zoom: 12.0,
-                                    ),
-                                    markers: {
-                                      Marker(
-                                        markerId: MarkerId("${mypost["baslik"]}"),
-                                        position: LatLng(geopoint.latitude, geopoint.longitude),
-                                        infoWindow: InfoWindow(
-                                          title: "${mypost["baslik"]}",
+                            return Container(width: 100,height: 100,
+                              child: AlertDialog(alignment: AlignmentDirectional.center,
+                                contentPadding: EdgeInsets.all(20.0),
+                                title: TextField(
+                                    decoration: InputDecoration(
+                                        hintText: "${mypost['baslik']}")),
+                                content: Container(height: 200,
+                                  child: Column(children: [
+                                    SizedBox(
+                                      width: 400,
+                                      height: 200,
+                                      child: GoogleMap(
+                                        onTap: (LatLng location) {
+                                          setState(() {
+                                            enlem = location.latitude;
+                                            boylam = location.longitude;
+                                            print(enlem.toString() +
+                                                boylam.toString());
+                                          });
+                                        },
+                                        initialCameraPosition: CameraPosition(
+                                          target: LatLng(geopoint.latitude,
+                                              geopoint.longitude),
+                                          zoom: 12.0,
                                         ),
-                                        onTap: () {
-                                          // Marker'a tıklandığında yapılacak işlemler
+                                        markers: {
+                                          Marker(
+                                            markerId:
+                                                MarkerId("${mypost["baslik"]}"),
+                                            position: LatLng(geopoint.latitude,
+                                                geopoint.longitude),
+                                            infoWindow: InfoWindow(
+                                              title: "${mypost["baslik"]}",
+                                            ),
+                                            onTap: () {
+                                              // Marker'a tıklandığında yapılacak işlemler
+                                            },
+                                          ),
                                         },
                                       ),
-                                    },
-                                  ),
+                                    ),
+                                  ]),
                                 ),
-
-                              ]),
-                              actions: [ ElevatedButton(onPressed: (){
-                                setState(() {
-                                  FirebaseFirestore.instance.collection('yerler').doc(mypost.id).update({'geopoint': new GeoPoint(enlem, boylam)},);
-                                  Navigator.pop(context);
-                                });
-
-
-                              }, child: Text("guncelle"))],
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          FirebaseFirestore.instance
+                                              .collection('yerler')
+                                              .doc(mypost.id)
+                                              .update(
+                                            {
+                                              'geopoint':
+                                                  new GeoPoint(enlem, boylam)
+                                            },
+                                          );
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text("guncelle")),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          firestore
+                                              .collection("yerler")
+                                              .doc(mypost.id)
+                                              .delete();
+                                          ;
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text("sil")),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text("geri")),
+                                ],
+                              ),
                             );
                           });
                     }
@@ -137,7 +181,7 @@ class _YerGuncellePageState extends State<YerGuncellePage> {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                               _showChoiseDialog(context);
+                                _showChoiseDialog(context);
                               },
                               child: Column(
                                 mainAxisAlignment:
@@ -168,36 +212,5 @@ class _YerGuncellePageState extends State<YerGuncellePage> {
         },
       ),
     );
-  }
-}
-
-class Pencere extends StatefulWidget {
-  @override
-  State<Pencere> createState() => _PencereState();
-}
-
-class _PencereState extends State<Pencere> {
-  @override
-  Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    if (tetik == true) {
-      return ExpansionTile(
-        title: Text("Form"),
-        children: <Widget>[
-          // Form widgetları
-        ],
-      );
-    } else {
-      return ExpansionTile(
-        title: Text("Form"),
-        children: <Widget>[
-          Card(
-            child: Text("fdsafsd"),
-          )
-
-          // Form widgetları
-        ],
-      );
-    }
   }
 }

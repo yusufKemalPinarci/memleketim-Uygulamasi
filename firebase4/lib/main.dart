@@ -15,5 +15,5 @@ import 'normalpage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(home:  YerGuncellePage()));
+  runApp(MaterialApp(home:  LoginScreen()));
 }
